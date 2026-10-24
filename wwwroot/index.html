@@ -1209,17 +1209,31 @@
             refreshIcons();
         }
 
-        function showAuth() {
-            authSection.style.display = "block";
-            vaultSection.style.display = "none";
-            logoutButton.style.display = "none";
+        
+function showAuth() {
+    authSection.style.display = "block";
+    vaultSection.style.display = "none";
+    logoutButton.style.display = "none";
 
-            entriesContainer.replaceChildren();
-            filesList.replaceChildren();
+    entriesContainer.replaceChildren();
+    filesList.replaceChildren();
 
-            resetEntryForm();
-            setAuthTab("login");
-        }
+    // Clear login and registration fields after logout
+    document.getElementById("loginForm").reset();
+    document.getElementById("registerForm").reset();
+
+    document.getElementById("loginUsername").value = "";
+    document.getElementById("loginPassword").value = "";
+    document.getElementById("registerUsername").value = "";
+    document.getElementById("registerPassword").value = "";
+
+    // Clear any previous user's in-memory vault data
+    vaultEntries = [];
+
+    resetEntryForm();
+    setAuthTab("login");
+}
+
 
         function makeText(tag, text) {
             const element = document.createElement(tag);
