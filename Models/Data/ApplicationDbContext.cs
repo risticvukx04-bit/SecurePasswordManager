@@ -13,4 +13,5 @@ public class ApplicationDbContext : DbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<VaultEntry> VaultEntries => Set<VaultEntry>();
     public DbSet<Session> Sessions => Set<Session>();
+    public DbSet<EncryptedFile> EncryptedFiles => Set<EncryptedFile>();
 }

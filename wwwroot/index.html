@@ -1,0 +1,1651 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0f172a">
+    <title>Secure Vault</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --bg: #0f172a;
+            --bg-light: #1e293b;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --text: #0f172a;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --surface: #ffffff;
+            --soft: #f8fafc;
+            --danger: #dc2626;
+            --success: #15803d;
+            --radius: 16px;
+            --shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            padding: 44px 20px;
+            background: linear-gradient(135deg, var(--bg) 0%, var(--bg-light) 100%);
+            background-attachment: fixed;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        button, input {
+            font: inherit;
+        }
+
+        button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 42px;
+            padding: 11px 16px;
+            border: 1px solid transparent;
+            border-radius: 9px;
+            background: var(--primary);
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background .2s ease, transform .2s ease,
+                        box-shadow .2s ease, border-color .2s ease;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+            box-shadow: 0 5px 14px rgba(37, 99, 235, .18);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        button:focus-visible,
+        input:focus-visible {
+            outline: 3px solid rgba(59, 130, 246, .35);
+            outline-offset: 2px;
+        }
+
+        button.secondary {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border-color: #dbeafe;
+        }
+
+        button.secondary:hover {
+            background: #dbeafe;
+        }
+
+        button.ghost {
+            background: white;
+            color: #475569;
+            border-color: var(--border);
+        }
+
+        button.ghost:hover {
+            background: #f1f5f9;
+        }
+
+        button.danger {
+            background: #fff1f2;
+            color: #be123c;
+            border-color: #ffe4e6;
+        }
+
+        button.danger:hover {
+            background: #ffe4e6;
+            box-shadow: none;
+        }
+
+        button.icon-button {
+            min-height: 36px;
+            padding: 8px 11px;
+        }
+
+        button svg {
+            width: 17px;
+            height: 17px;
+        }
+
+        input {
+            width: 100%;
+            min-height: 46px;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: var(--soft);
+            color: var(--text);
+            font-size: 14px;
+            outline: none;
+            transition: border-color .2s ease, background .2s ease,
+                        box-shadow .2s ease;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, .09);
+        }
+
+        input::placeholder {
+            color: #94a3b8;
+        }
+
+        input[type="file"] {
+            padding: 8px;
+            background: white;
+        }
+
+        input[type="file"]::file-selector-button {
+            margin-right: 12px;
+            padding: 7px 10px;
+            border: 0;
+            border-radius: 6px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 1040px;
+            margin: 0 auto;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .brand-icon,
+        .logo-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            width: 48px;
+            height: 48px;
+            border-radius: 13px;
+            background: #eff6ff;
+            color: var(--primary);
+        }
+
+        .brand-icon svg,
+        .logo-icon svg {
+            width: 25px;
+            height: 25px;
+        }
+
+        .brand h1 {
+            font-size: 23px;
+            font-weight: 800;
+            letter-spacing: -.7px;
+        }
+
+        .brand p {
+            margin-top: 4px;
+            color: #cbd5e1;
+            font-size: 12px;
+        }
+
+        .auth-layout {
+            max-width: 440px;
+            margin: 0 auto;
+        }
+
+        .card {
+            padding: 36px;
+            border: 1px solid rgba(255, 255, 255, .65);
+            border-radius: var(--radius);
+            background: var(--surface);
+            box-shadow: var(--shadow);
+            animation: fadeUp .35s ease both;
+        }
+
+        .auth-header {
+            margin-bottom: 28px;
+            text-align: center;
+        }
+
+        .auth-header .logo-icon {
+            margin-bottom: 15px;
+        }
+
+        .auth-header h2 {
+            margin-bottom: 8px;
+            color: var(--text);
+            font-size: 25px;
+            font-weight: 800;
+            letter-spacing: -.7px;
+        }
+
+        .auth-header p {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .auth-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            margin-bottom: 25px;
+            padding: 5px;
+            border-radius: 10px;
+            background: #f1f5f9;
+        }
+
+        .auth-tabs button {
+            min-height: 39px;
+            padding: 9px 12px;
+            border: 0;
+            background: transparent;
+            color: #64748b;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .auth-tabs button.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 1px 4px rgba(15, 23, 42, .12);
+        }
+
+        .form-group {
+            margin-bottom: 19px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #334155;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper > svg {
+            position: absolute;
+            top: 50%;
+            left: 14px;
+            width: 18px;
+            height: 18px;
+            color: #94a3b8;
+            pointer-events: none;
+            transform: translateY(-50%);
+        }
+
+        .input-wrapper input {
+            padding-left: 43px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            min-height: 47px;
+            margin-top: 7px;
+        }
+
+        .auth-footer {
+            margin-top: 25px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.7;
+            text-align: center;
+        }
+
+        .auth-footer svg {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            margin-right: 4px;
+            vertical-align: -3px;
+            color: var(--success);
+        }
+
+        #message {
+            margin: 0 0 18px;
+            padding: 0;
+            color: white;
+            font-size: 13px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        #message:empty {
+            display: none;
+        }
+
+        #message:not(:empty) {
+            padding: 12px 15px;
+            border: 1px solid rgba(255, 255, 255, .15);
+            border-radius: 9px;
+            background: rgba(15, 23, 42, .5);
+        }
+
+        /* Vault */
+
+        #vaultSection {
+            display: none;
+            overflow: hidden;
+            padding: 0;
+        }
+
+        #logoutButton {
+            display: none;
+        }
+
+        .vault-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 23px 30px;
+            border-bottom: 1px solid var(--border);
+            background: white;
+        }
+
+        .vault-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .vault-brand .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 11px;
+        }
+
+        .vault-brand .logo-icon svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .vault-brand h2 {
+            color: var(--text);
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -.4px;
+        }
+
+        .vault-brand p {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .vault-content {
+            padding: 30px;
+            background: #f8fafc;
+        }
+
+        .welcome {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
+        .welcome h2 {
+            margin-bottom: 8px;
+            font-size: 25px;
+            font-weight: 800;
+            letter-spacing: -.7px;
+        }
+
+        .welcome p {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .security-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+            padding: 8px 10px;
+            border: 1px solid #bbf7d0;
+            border-radius: 30px;
+            background: #f0fdf4;
+            color: #166534;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .security-badge svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .vault-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 20px;
+            align-items: start;
+        }
+
+        .panel {
+            min-width: 0;
+            padding: 24px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: white;
+            box-shadow: 0 3px 12px rgba(15, 23, 42, .035);
+            animation: fadeUp .3s ease both;
+        }
+
+        .panel-heading {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            margin-bottom: 20px;
+        }
+
+        .panel-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            width: 39px;
+            height: 39px;
+            border-radius: 10px;
+            background: #eff6ff;
+            color: var(--primary);
+        }
+
+        .panel-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .panel-heading h3 {
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .panel-heading p {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .panel h4 {
+            margin: 24px 0 12px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .panel .form-group {
+            margin-bottom: 16px;
+        }
+
+        .panel button {
+            margin-top: 5px;
+        }
+
+        .panel form button + button {
+            margin-left: 5px;
+        }
+
+        .panel form button:not(.btn-primary) {
+            margin-top: 9px;
+        }
+
+        .panel .btn-primary {
+            margin-top: 4px;
+        }
+
+        .entry-list,
+        .file-list {
+            display: grid;
+            gap: 11px;
+        }
+
+        .entry,
+        .file-entry {
+            min-width: 0;
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: white;
+            transition: border-color .2s ease, box-shadow .2s ease;
+            animation: fadeUp .25s ease both;
+        }
+
+        .entry:hover,
+        .file-entry:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, .045);
+        }
+
+        .entry h4 {
+            margin: 0 0 12px;
+            color: #0f172a;
+            font-size: 14px;
+            overflow-wrap: anywhere;
+        }
+
+        .entry p {
+            margin: 8px 0;
+            color: #475569;
+            font-size: 12px;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+        }
+
+        .entry-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 13px;
+            padding-top: 12px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .entry-actions button {
+            margin: 0;
+        }
+
+        .empty-state {
+            padding: 22px 14px;
+            border: 1px dashed #cbd5e1;
+            border-radius: 10px;
+            background: #f8fafc;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.7;
+            text-align: center;
+        }
+
+        .empty-state svg {
+            display: block;
+            width: 25px;
+            height: 25px;
+            margin: 0 auto 9px;
+            color: #94a3b8;
+        }
+
+        .file-entry {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            min-width: 0;
+        }
+
+        .file-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            width: 37px;
+            height: 37px;
+            border-radius: 9px;
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .file-icon svg {
+            width: 19px;
+            height: 19px;
+        }
+
+        .file-name {
+            color: #334155;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+        }
+
+        .muted {
+            margin-top: 4px;
+            color: #94a3b8;
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        .file-entry button {
+            flex-shrink: 0;
+            margin: 0;
+        }
+
+        .file-upload-area {
+            padding: 17px;
+            border: 1px dashed #cbd5e1;
+            border-radius: 10px;
+            background: #f8fafc;
+        }
+
+        .file-upload-area input {
+            background: white;
+        }
+
+        .file-upload-area p {
+            margin-top: 10px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .file-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 17px;
+        }
+
+        .file-actions button {
+            margin: 0;
+        }
+
+        .panel-divider {
+            height: 1px;
+            margin: 22px 0;
+            border: 0;
+            background: var(--border);
+        }
+
+        .vault-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            margin-top: 23px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .vault-bottom p {
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .vault-bottom p svg {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            margin-right: 4px;
+            vertical-align: -3px;
+        }
+
+        .vault-bottom button {
+            margin: 0;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 760px) {
+            body {
+                padding: 25px 14px;
+            }
+
+            .vault-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .vault-content {
+                padding: 22px;
+            }
+
+            .vault-topbar {
+                padding: 19px 22px;
+            }
+
+            .panel {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 18px 10px;
+            }
+
+            .brand {
+                margin-bottom: 22px;
+            }
+
+            .brand h1 {
+                font-size: 20px;
+            }
+
+            .card {
+                padding: 25px 20px;
+            }
+
+            .auth-header h2 {
+                font-size: 23px;
+            }
+
+            .vault-topbar {
+                align-items: flex-start;
+                padding: 16px;
+            }
+
+            .vault-brand {
+                gap: 9px;
+            }
+
+            .vault-brand h2 {
+                font-size: 15px;
+            }
+
+            .vault-brand p {
+                max-width: 175px;
+                line-height: 1.5;
+            }
+
+            .vault-topbar #logoutButton {
+                min-height: 36px;
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+
+            .vault-content {
+                padding: 16px;
+            }
+
+            .welcome {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .welcome h2 {
+                font-size: 22px;
+            }
+
+            .panel {
+                padding: 17px;
+            }
+
+            .file-entry {
+                align-items: flex-start;
+            }
+
+            .file-entry button {
+                padding: 9px 10px;
+                font-size: 12px;
+            }
+
+            .vault-bottom {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .vault-bottom button {
+                width: 100%;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                scroll-behavior: auto !important;
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="app-container">
+        <header class="brand">
+            <div class="brand-icon">
+                <i data-lucide="shield-check"></i>
+            </div>
+            <div>
+                <h1>Secure Vault</h1>
+                <p>Your credentials, protected and encrypted.</p>
+            </div>
+        </header>
+
+        <p id="message" role="status" aria-live="polite"></p>
+
+        <section id="authSection" class="auth-layout">
+            <div class="card">
+                <header class="auth-header">
+                    <div class="logo-icon">
+                        <i data-lucide="shield-check"></i>
+                    </div>
+                    <h2 id="authTitle">Welcome back</h2>
+                    <p id="authSubtitle">
+                        Sign in to access your secure password vault.
+                    </p>
+                </header>
+
+                <div class="auth-tabs" role="tablist" aria-label="Account options">
+                    <button type="button" id="showLoginTab" class="active"
+                            role="tab" aria-selected="true">
+                        Sign In
+                    </button>
+                    <button type="button" id="showRegisterTab"
+                            role="tab" aria-selected="false">
+                        Create Account
+                    </button>
+                </div>
+
+                <div id="loginPanel">
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="loginUsername">Username</label>
+                            <div class="input-wrapper">
+                                <i data-lucide="user-round"></i>
+                                <input id="loginUsername"
+                                       autocomplete="username"
+                                       placeholder="Enter your username"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="loginPassword">Password</label>
+                            <div class="input-wrapper">
+                                <i data-lucide="lock-keyhole"></i>
+                                <input id="loginPassword"
+                                       type="password"
+                                       autocomplete="current-password"
+                                       placeholder="Enter your password"
+                                       required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-primary">
+                            <i data-lucide="log-in"></i>
+                            Sign In
+                        </button>
+                    </form>
+                </div>
+
+                <div id="registerPanel" hidden>
+                    <form id="registerForm">
+                        <div class="form-group">
+                            <label for="registerUsername">Username</label>
+                            <div class="input-wrapper">
+                                <i data-lucide="user-round"></i>
+                                <input id="registerUsername"
+                                       autocomplete="username"
+                                       placeholder="Choose a username"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="registerPassword">Password</label>
+                            <div class="input-wrapper">
+                                <i data-lucide="lock-keyhole"></i>
+                                <input id="registerPassword"
+                                       type="password"
+                                       autocomplete="new-password"
+                                       placeholder="Create a strong password"
+                                       required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-primary">
+                            <i data-lucide="user-plus"></i>
+                            Create Account
+                        </button>
+                    </form>
+                </div>
+
+                <footer class="auth-footer">
+                    <i data-lucide="shield-check"></i>
+                    Your private vault, protected by secure authentication.
+                </footer>
+            </div>
+        </section>
+
+        <section id="vaultSection" class="card">
+            <header class="vault-topbar">
+                <div class="vault-brand">
+                    <div class="logo-icon">
+                        <i data-lucide="shield-check"></i>
+                    </div>
+                    <div>
+                        <h2>Secure Vault</h2>
+                        <p>Your personal security dashboard</p>
+                    </div>
+                </div>
+
+                <button type="button" id="logoutButton" class="ghost">
+                    <i data-lucide="log-out"></i>
+                    Logout
+                </button>
+            </header>
+
+            <div class="vault-content">
+                <div class="welcome">
+                    <div>
+                        <h2>My Vault</h2>
+                        <p>Manage your credentials and encrypted files in one place.</p>
+                    </div>
+                    <div class="security-badge">
+                        <i data-lucide="shield-check"></i>
+                        Secure session
+                    </div>
+                </div>
+
+                <div class="vault-grid">
+                    <section class="panel">
+                        <header class="panel-heading">
+                            <div class="panel-icon">
+                                <i data-lucide="key-round"></i>
+                            </div>
+                            <div>
+                                <h3>Passwords</h3>
+                                <p>Your saved website credentials</p>
+                            </div>
+                        </header>
+
+                        <h4 id="entryFormTitle">Add a credential</h4>
+
+                        <form id="entryForm">
+                            <div class="form-group">
+                                <label for="website">Website or service</label>
+                                <input id="website"
+                                       placeholder="e.g. example.com"
+                                       required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="entryUsername">Username</label>
+                                <input id="entryUsername"
+                                       placeholder="Your username"
+                                       required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="entryPassword">Password</label>
+                                <input id="entryPassword"
+                                       type="password"
+                                       autocomplete="new-password"
+                                       placeholder="Your password"
+                                       required>
+                            </div>
+
+                            <button type="submit" id="saveEntryButton"
+                                    class="btn-primary">
+                                <i data-lucide="plus"></i>
+                                Save credential
+                            </button>
+
+                            <button type="button" id="cancelEditButton"
+                                    class="ghost" hidden>
+                                Cancel edit
+                            </button>
+                        </form>
+
+                        <hr class="panel-divider">
+
+                        <header class="panel-heading">
+                            <div class="panel-icon">
+                                <i data-lucide="library"></i>
+                            </div>
+                            <div>
+                                <h3>Saved credentials</h3>
+                                <p>Manage your stored entries</p>
+                            </div>
+                        </header>
+
+                        <div id="entries" class="entry-list"></div>
+                    </section>
+
+                    <section class="panel">
+                        <header class="panel-heading">
+                            <div class="panel-icon">
+                                <i data-lucide="folder-lock"></i>
+                            </div>
+                            <div>
+                                <h3>Encrypted File Storage</h3>
+                                <p>Store files securely</p>
+                            </div>
+                        </header>
+
+                        <p style="color: var(--muted); font-size: 12px; line-height: 1.7; margin-bottom: 17px;">
+                            Files are encrypted on the server and decrypted when downloaded.
+                        </p>
+
+                        <form id="fileUploadForm">
+                            <div class="file-upload-area">
+                                <label for="fileInput">Choose a file to upload</label>
+                                <input id="fileInput" type="file" required>
+                                <p>
+                                    Maximum file size: 10 MB. Your file will be encrypted before storage.
+                                </p>
+                            </div>
+
+                            <button type="submit" id="uploadFileButton"
+                                    class="btn-primary">
+                                <i data-lucide="upload-cloud"></i>
+                                Encrypt &amp; Upload
+                            </button>
+                        </form>
+
+                        <hr class="panel-divider">
+
+                        <header class="panel-heading">
+                            <div class="panel-icon">
+                                <i data-lucide="files"></i>
+                            </div>
+                            <div>
+                                <h3>My Files</h3>
+                                <p>Your uploaded files</p>
+                            </div>
+                        </header>
+
+                        <div id="filesList" class="file-list"></div>
+
+                        <div class="file-actions">
+                            <span class="muted">Encrypted file storage</span>
+                            <button type="button" id="refreshFilesButton"
+                                    class="ghost icon-button">
+                                <i data-lucide="refresh-cw"></i>
+                                Refresh files
+                            </button>
+                        </div>
+                    </section>
+                </div>
+
+                <footer class="vault-bottom">
+                    <p>
+                        <i data-lucide="lock-keyhole"></i>
+                        Keep your credentials private. Always log out on shared devices.
+                    </p>
+                    <button type="button" id="logoutButtonBottom" class="danger">
+                        <i data-lucide="log-out"></i>
+                        Log out securely
+                    </button>
+                </footer>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const message = document.getElementById("message");
+        const authSection = document.getElementById("authSection");
+        const vaultSection = document.getElementById("vaultSection");
+        const logoutButton = document.getElementById("logoutButton");
+        const entriesContainer = document.getElementById("entries");
+        const filesList = document.getElementById("filesList");
+
+        let editingId = null;
+        let vaultEntries = [];
+
+        async function api(url, options = {}) {
+            const headers = { ...(options.headers || {}) };
+
+            if (options.body && !(options.body instanceof FormData)) {
+                headers["Content-Type"] = "application/json";
+            }
+
+            const response = await fetch(url, {
+                credentials: "same-origin",
+                ...options,
+                headers
+            });
+
+            if (!response.ok) {
+                const details = await response.text();
+                throw new Error(
+                    details || `Request failed (${response.status})`
+                );
+            }
+
+            if (response.status === 204) {
+                return null;
+            }
+
+            const contentType = response.headers.get("content-type") || "";
+
+            return contentType.includes("application/json")
+                ? response.json()
+                : response.text();
+        }
+
+        function refreshIcons() {
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+        }
+
+        function setAuthTab(tab) {
+            const loginPanel = document.getElementById("loginPanel");
+            const registerPanel = document.getElementById("registerPanel");
+            const loginTab = document.getElementById("showLoginTab");
+            const registerTab = document.getElementById("showRegisterTab");
+            const title = document.getElementById("authTitle");
+            const subtitle = document.getElementById("authSubtitle");
+
+            const isLogin = tab === "login";
+
+            loginPanel.hidden = !isLogin;
+            registerPanel.hidden = isLogin;
+
+            loginTab.classList.toggle("active", isLogin);
+            registerTab.classList.toggle("active", !isLogin);
+
+            loginTab.setAttribute("aria-selected", String(isLogin));
+            registerTab.setAttribute("aria-selected", String(!isLogin));
+
+            title.textContent = isLogin ? "Welcome back" : "Create your account";
+            subtitle.textContent = isLogin
+                ? "Sign in to access your secure password vault."
+                : "Create an account to start securing your credentials.";
+        }
+
+        document.getElementById("showLoginTab").addEventListener(
+            "click", () => setAuthTab("login")
+        );
+
+        document.getElementById("showRegisterTab").addEventListener(
+            "click", () => setAuthTab("register")
+        );
+
+        function showVault() {
+            authSection.style.display = "none";
+            vaultSection.style.display = "block";
+            logoutButton.style.display = "inline-flex";
+            refreshIcons();
+        }
+
+        function showAuth() {
+            authSection.style.display = "block";
+            vaultSection.style.display = "none";
+            logoutButton.style.display = "none";
+
+            entriesContainer.replaceChildren();
+            filesList.replaceChildren();
+
+            resetEntryForm();
+            setAuthTab("login");
+        }
+
+        function makeText(tag, text) {
+            const element = document.createElement(tag);
+            element.textContent = text ?? "";
+            return element;
+        }
+
+        function makeEmptyState(icon, text) {
+            const container = document.createElement("div");
+            container.className = "empty-state";
+
+            const iconElement = document.createElement("i");
+            iconElement.setAttribute("data-lucide", icon);
+
+            container.append(iconElement, makeText("p", text));
+            return container;
+        }
+
+        async function loadVault() {
+            try {
+                vaultEntries = await api("/vault");
+                renderEntries();
+            } catch (error) {
+                message.textContent =
+                    "Could not load vault: " + error.message;
+
+                if (error.message.toLowerCase().includes("logged in")) {
+                    showAuth();
+                }
+            }
+        }
+
+        function renderEntries() {
+            entriesContainer.replaceChildren();
+
+            if (!Array.isArray(vaultEntries) || vaultEntries.length === 0) {
+                entriesContainer.append(
+                    makeEmptyState(
+                        "key-round",
+                        "Your vault is empty. Add your first credential above."
+                    )
+                );
+                refreshIcons();
+                return;
+            }
+
+            for (const entry of vaultEntries) {
+                const card = document.createElement("div");
+                card.className = "entry";
+
+                card.append(
+                    makeText("h4", entry.website),
+                    makeText("p", "Username: " + entry.username),
+                    makeText("p", "Password: " + entry.password)
+                );
+
+                const actions = document.createElement("div");
+                actions.className = "entry-actions";
+
+                const editButton = makeText("button", "Edit");
+                editButton.type = "button";
+                editButton.className = "secondary icon-button";
+
+                editButton.addEventListener("click", () => {
+                    editingId = entry.id;
+
+                    document.getElementById("website").value =
+                        entry.website;
+
+                    document.getElementById("entryUsername").value =
+                        entry.username;
+
+                    document.getElementById("entryPassword").value =
+                        entry.password;
+
+                    document.getElementById("entryFormTitle").textContent =
+                        "Edit credential";
+
+                    document.getElementById("saveEntryButton").innerHTML =
+                        '<i data-lucide="save"></i> Update credential';
+
+                    document.getElementById("cancelEditButton").hidden = false;
+                    document.getElementById("website").focus();
+
+                    refreshIcons();
+                });
+
+                const deleteButton = makeText("button", "Delete");
+                deleteButton.type = "button";
+                deleteButton.className = "danger icon-button";
+
+                deleteButton.addEventListener("click", async () => {
+                    if (!confirm(
+                        `Delete the credential for ${entry.website}?`
+                    )) {
+                        return;
+                    }
+
+                    try {
+                        await api(`/vault/${entry.id}`, {
+                            method: "DELETE"
+                        });
+
+                        message.textContent = "Credential deleted.";
+                        await loadVault();
+                    } catch (error) {
+                        message.textContent =
+                            "Delete failed: " + error.message;
+                    }
+                });
+
+                actions.append(editButton, deleteButton);
+                card.append(actions);
+                entriesContainer.append(card);
+            }
+
+            refreshIcons();
+        }
+
+        function resetEntryForm() {
+            editingId = null;
+
+            document.getElementById("entryForm").reset();
+
+            document.getElementById("entryFormTitle").textContent =
+                "Add a credential";
+
+            document.getElementById("saveEntryButton").innerHTML =
+                '<i data-lucide="plus"></i> Save credential';
+
+            document.getElementById("cancelEditButton").hidden = true;
+
+            refreshIcons();
+        }
+
+        async function loadFiles() {
+            filesList.replaceChildren();
+            filesList.append(
+                makeEmptyState("loader-circle", "Loading files...")
+            );
+            refreshIcons();
+
+            try {
+                const files = await api("/files");
+                filesList.replaceChildren();
+
+                if (!Array.isArray(files) || files.length === 0) {
+                    filesList.append(
+                        makeEmptyState("file-x", "No files uploaded yet.")
+                    );
+                    refreshIcons();
+                    return;
+                }
+
+                for (const file of files) {
+                    const card = document.createElement("div");
+                    card.className = "file-entry";
+
+                    const info = document.createElement("div");
+                    info.className = "file-info";
+
+                    const fileIcon = document.createElement("div");
+                    fileIcon.className = "file-icon";
+
+                    const icon = document.createElement("i");
+                    icon.setAttribute("data-lucide", "file-lock");
+                    fileIcon.append(icon);
+
+                    const details = document.createElement("div");
+                    details.style.minWidth = "0";
+
+                    const filename = makeText(
+                        "div",
+                        file.originalFileName
+                    );
+                    filename.className = "file-name";
+                    details.append(filename);
+
+                    if (file.uploadedAt) {
+                        const date = new Date(file.uploadedAt);
+
+                        const uploaded = makeText(
+                            "div",
+                            "Uploaded: " + date.toLocaleString()
+                        );
+                        uploaded.className = "muted";
+                        details.append(uploaded);
+                    }
+
+                    info.append(fileIcon, details);
+
+                    const downloadButton = makeText(
+                        "button",
+                        "Download"
+                    );
+                    downloadButton.type = "button";
+                    downloadButton.className = "secondary icon-button";
+
+                    downloadButton.addEventListener("click", async () => {
+                        downloadButton.disabled = true;
+                        downloadButton.textContent = "Downloading...";
+
+                        try {
+                            const response = await fetch(
+                                `/files/${file.id}/download`,
+                                { credentials: "same-origin" }
+                            );
+
+                            if (!response.ok) {
+                                const details = await response.text();
+                                throw new Error(
+                                    details || "Download failed."
+                                );
+                            }
+
+                            const blob = await response.blob();
+                            const objectUrl = URL.createObjectURL(blob);
+
+                            const link = document.createElement("a");
+                            link.href = objectUrl;
+                            link.download = file.originalFileName;
+                            document.body.append(link);
+                            link.click();
+                            link.remove();
+
+                            setTimeout(
+                                () => URL.revokeObjectURL(objectUrl),
+                                1000
+                            );
+
+                            message.textContent =
+                                "File downloaded successfully.";
+                        } catch (error) {
+                            message.textContent =
+                                "Download failed: " + error.message;
+                        } finally {
+                            downloadButton.disabled = false;
+                            downloadButton.innerHTML =
+                                '<i data-lucide="download"></i> Download';
+                            refreshIcons();
+                        }
+                    });
+
+                    card.append(info, downloadButton);
+                    filesList.append(card);
+                }
+
+                refreshIcons();
+            } catch (error) {
+                filesList.replaceChildren(
+                    makeEmptyState(
+                        "alert-circle",
+                        "Could not load files: " + error.message
+                    )
+                );
+                refreshIcons();
+            }
+        }
+
+        document.getElementById("registerForm")
+            .addEventListener("submit", async event => {
+                event.preventDefault();
+
+                try {
+                    const username =
+                        document.getElementById("registerUsername").value;
+
+                    const password =
+                        document.getElementById("registerPassword").value;
+
+                    await api("/register", {
+                        method: "POST",
+                        body: JSON.stringify({ username, password })
+                    });
+
+                    message.textContent =
+                        "Registration successful! You can now log in.";
+
+                    document.getElementById("loginUsername").value = username;
+                    document.getElementById("loginPassword").value = "";
+                    setAuthTab("login");
+                } catch (error) {
+                    message.textContent =
+                        "Registration failed: " + error.message;
+                }
+            });
+
+        document.getElementById("loginForm")
+            .addEventListener("submit", async event => {
+                event.preventDefault();
+
+                try {
+                    const username =
+                        document.getElementById("loginUsername").value;
+
+                    const password =
+                        document.getElementById("loginPassword").value;
+
+                    await api("/login", {
+                        method: "POST",
+                        body: JSON.stringify({ username, password })
+                    });
+
+                    message.textContent = "Login successful!";
+
+                    showVault();
+                    await loadVault();
+                    await loadFiles();
+                } catch (error) {
+                    message.textContent =
+                        "Login failed: " + error.message;
+                }
+            });
+
+        document.getElementById("entryForm")
+            .addEventListener("submit", async event => {
+                event.preventDefault();
+
+                const body = JSON.stringify({
+                    website: document.getElementById("website").value,
+                    username:
+                        document.getElementById("entryUsername").value,
+                    password:
+                        document.getElementById("entryPassword").value
+                });
+
+                try {
+                    if (editingId === null) {
+                        await api("/vault", {
+                            method: "POST",
+                            body
+                        });
+
+                        message.textContent = "Credential saved.";
+                    } else {
+                        await api(`/vault/${editingId}`, {
+                            method: "PUT",
+                            body
+                        });
+
+                        message.textContent = "Credential updated.";
+                    }
+
+                    resetEntryForm();
+                    await loadVault();
+                } catch (error) {
+                    message.textContent =
+                        "Could not save credential: " + error.message;
+                }
+            });
+
+        document.getElementById("cancelEditButton")
+            .addEventListener("click", resetEntryForm);
+
+        document.getElementById("fileUploadForm")
+            .addEventListener("submit", async event => {
+                event.preventDefault();
+
+                const fileInput = document.getElementById("fileInput");
+                const uploadButton =
+                    document.getElementById("uploadFileButton");
+
+                const file = fileInput.files[0];
+
+                if (!file) {
+                    message.textContent = "Please choose a file.";
+                    return;
+                }
+
+                if (file.size > 10 * 1024 * 1024) {
+                    message.textContent =
+                        "File is too large. Maximum size is 10 MB.";
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append("file", file);
+
+                uploadButton.disabled = true;
+                uploadButton.innerHTML =
+                    '<i data-lucide="loader-circle"></i> Encrypting and uploading...';
+                refreshIcons();
+
+                try {
+                    const result = await api("/files/upload", {
+                        method: "POST",
+                        body: formData
+                    });
+
+                    message.textContent =
+                        result.message || "File uploaded successfully.";
+
+                    fileInput.value = "";
+                    await loadFiles();
+                } catch (error) {
+                    message.textContent =
+                        "Upload failed: " + error.message;
+                } finally {
+                    uploadButton.disabled = false;
+                    uploadButton.innerHTML =
+                        '<i data-lucide="upload-cloud"></i> Encrypt &amp; Upload';
+                    refreshIcons();
+                }
+            });
+
+        document.getElementById("refreshFilesButton")
+            .addEventListener("click", loadFiles);
+
+        async function performLogout() {
+            try {
+                await api("/logout", { method: "POST" });
+
+                message.textContent = "Logged out.";
+                showAuth();
+            } catch (error) {
+                message.textContent =
+                    "Logout failed: " + error.message;
+            }
+        }
+
+        logoutButton.addEventListener("click", performLogout);
+
+        document.getElementById("logoutButtonBottom")
+            .addEventListener("click", performLogout);
+
+        refreshIcons();
+    </script>
+</body>
+</html>
